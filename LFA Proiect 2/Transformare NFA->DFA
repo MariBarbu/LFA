@@ -1,0 +1,53 @@
+
+def transf(multime):
+    global l, dfa_stari
+    next={}
+    dfa_stari.append(multime)
+    for i in multime:
+        for j in range(len(l)):
+            for m in l[i][j]:
+                if m in next:
+                    if j not in next[m]:
+                        next[m].append(j)
+                else:
+                    next[m]=[j]
+    transformare(next, multime)
+
+def transformare(dictionar, multime):
+    global p, dfa_p, dfa_nr_tranzitii
+    for i,j in dictionar.items():
+        print(multime, j, i)
+        dfa_nr_tranzitii+=1
+        for a in j:
+            if (a in p) and (j not in dfa_p) :
+                dfa_p.append(j)
+                break
+        if j not  in dfa_stari:
+            transf(j)
+
+
+
+
+f=open("fisier", "r")
+nr_stari=f.readline() #numarul total de stari
+st_init=int(f.readline()) #starea initiala
+nr_fin=int(f.readline()) #numarul de stari finale
+p=[int(x) for x in f.readline().split()] #starile finale
+nr_tranz=int(f.readline())      #numarul de tranzitii
+l=[[[] for j in range(int(nr_stari))] for i in range(int(nr_stari))]
+tranz=[x.split() for x in f.readlines()]        #tranzitiile, cate una pe o linie de forma "1 2 a" sau "1 2 ab"
+for i in tranz:
+    for j in range(2, len(i)):
+        l[int(i[0])][int(i[1])].append(i[j])
+print(l)
+dfa_stari=[]
+dfa_p=[]
+if st_init in p:
+    dfa_p.append(st_init)
+dfa_nr_tranzitii=0
+transf([st_init])
+print("Numar de stari: ", len(dfa_stari))
+print("Acestea sunt: ", dfa_stari)
+print("Starea initiala este: ", [st_init])
+print("Stari finale: ", dfa_p)
+print("Numar de tranzitii: ", dfa_nr_tranzitii)
