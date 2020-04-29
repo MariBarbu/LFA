@@ -1,0 +1,38 @@
+
+def accept(st,n):
+    global l, cuvant,p
+    if n == len(cuvant)-1 :
+        print(n)
+        if st in p:
+            print("da")
+            return True
+    for i in range(len(l)):
+        if l[st][i]!=0 and cuvant[n] in l[st][i]:
+            print(n)
+            print(st, i, cuvant[n])
+            n+=1
+            return accept(i, n)
+    return False
+
+
+
+f=open("fisier", "r")
+cuvant=f.readline() #citim cuvantul de pe prima linie
+nr_stari=f.readline() #numarul total de stari
+st_init=int(f.readline()) #starea initiala
+nr_fin=int(f.readline()) #numarul de stari finale
+p=[int(x) for x in f.readline().split()] #starile finale
+nr_tranz=int(f.readline())      #numarul de tranzitii
+l=[[0 for j in range(int(nr_stari))] for i in range(int(nr_stari))]
+tranz=[x.split() for x in f.readlines()]        #tranzitiile, cate una pe o linie de forma "1 2 a" sau "1 2 ab"
+for i in tranz:
+    l[int(i[0])][int(i[1])]=i[2]
+print(l)
+n=0
+cuvant=cuvant.replace("#","")
+if cuvant == '\n' and st_init in p:
+    print("accepted")
+elif accept(st_init,0):
+    print("acceptat")
+else:
+    print("neacceptat")
