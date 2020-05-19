@@ -1,0 +1,74 @@
+#Lungime maxima cuvant
+#Numar stari neterminale
+#Starile terminale
+#Stare->Productii
+
+#citim toate datele
+f=open("gramatica.in", "r")
+n=int(f.readline())
+nr_stari=int(f.readline())
+N=f.readline().split()
+productii={i: [] for i in N}
+for i in range(nr_stari):
+    temp=f.readline().strip(" \n")
+    temp=temp.split("->")
+    temp[1]=temp[1].split(" | ")
+    productii[temp[0]].extend(temp[1])
+#print(productii)
+
+#inlocuim lambda cu acele cuvinte care vor fi generate fara stari neterminale acolo unde este cazul
+stari_lambda=[]
+for stare, productie in productii.items():
+    if '#' in productie:
+        productie.remove("#")
+        stari_lambda.append(stare)
+#print(stari_lambda)
+for productie in productii.values():
+    for subproductie in productie:
+        for caracter in range(len(subproductie)):
+            if subproductie[caracter] in stari_lambda:
+                new=subproductie[: caracter]+subproductie[caracter+1:]
+                productie.append(new)
+#print(productii)
+
+rezultat=[]
+stari_curente=[N[0]]
+exista_stari= True
+while exista_stari:
+    next_stari=[]
+    for stare in stari_curente:
+        for i in range(len(stare)):
+            if stare[i] in N:
+                before=stare[:i]
+                after=stare[i+1:]
+                for next in productii[stare[i]]:
+                    next_stari.append(before+next+after)
+    #print(next_stari)
+    stari_curente=[]
+    for stare in next_stari:
+        #print(stare)
+        ok=True
+        for i in stare:
+            if i in N:
+                ok=False
+        if ok: #Daca nu contine stari neterminale
+            if len(stare)<=n and stare not in rezultat:
+                if(stare==''):
+                    rezultat.append('#')
+                else:
+                    rezultat.append(stare)
+        elif len(stare)<=n+1:
+            stari_curente.append(stare)
+    if not stari_curente:
+        exista_stari=False
+print(rezultat)
+
+
+
+
+
+
+
+
+
+
